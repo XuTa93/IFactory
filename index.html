@@ -157,10 +157,10 @@
 <div class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 max-w-5xl mx-auto shadow-2xl">
     <h3 class="text-base font-semibold mb-6 text-slate-400 text-center uppercase tracking-[0.2em]">Công Thức Cốt Lõi OEE</h3>
     
-    <div class="grid grid-cols-1 md:flex md:items-center md:justify-between gap-4 mb-5">
+    <div class="flex items-center justify-between gap-4 mb-5">
         
         <button onclick="showDetail('availability')" 
-            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-orange-400/30 hover:border-orange-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            class="relative overflow-hidden aspect-square w-32 md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-orange-400/30 hover:border-orange-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
             <span class="relative block text-lg font-bold text-orange-400 group-hover:scale-105 transition-transform">Khả dụng</span>
             
             <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-orange-300 transition-colors">Availability</span>
@@ -173,7 +173,7 @@
         </div>
 
         <button onclick="showDetail('performance')" 
-            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-cyan-400/30 hover:border-cyan-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            class="relative overflow-hidden aspect-square w-32 md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-cyan-400/30 hover:border-cyan-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
             <span class="relative block text-lg font-bold text-cyan-400 group-hover:scale-105 transition-transform">Hiệu suất</span>
             
             <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-cyan-300 transition-colors">Performance</span>
@@ -186,7 +186,7 @@
         </div>
 
         <button onclick="showDetail('quality')" 
-            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-green-400/30 hover:border-green-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            class="relative overflow-hidden aspect-square w-32 md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-green-400/30 hover:border-green-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
             <span class="relative block text-lg font-bold text-green-400 group-hover:scale-105 transition-transform">Chất lượng</span>
             
             <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-green-300 transition-colors">Quality</span>
@@ -904,6 +904,9 @@
             // Add the active classes to the button that opened the tab
             evt.currentTarget.classList.remove('text-slate-400', 'border-transparent');
             evt.currentTarget.classList.add('text-cyan-400', 'border-cyan-400');
+
+            // Scroll to top when switching tabs
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Charts Logic (Wrapped in function so it initializes properly)
