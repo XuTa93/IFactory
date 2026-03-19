@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Pháp Tối Ưu Hóa Sản Xuất Trong Nhà Máy - Tổng Hợp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #0F172A;
+            color: #F8FAFC;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 250px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #06B6D4, #3B82F6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .timeline-container {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 4px solid #06B6D4;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -0.65rem;
+            top: 0;
+            width: 1.2rem;
+            height: 1.2rem;
+            background-color: #06B6D4;
+            border-radius: 50%;
+            border: 4px solid #0F172A;
+        }
+        /* Custom Scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F172A; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+
+        /* Hiệu ứng phát sáng cho nút nhấn */
+        @keyframes pulse-ring-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        @keyframes pulse-ring-slate {
+            0% { box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.5); }
+            70% { box-shadow: 0 0 0 8px rgba(148, 163, 184, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(148, 163, 184, 0); }
+        }
+        .btn-pulse-green {
+            animation: pulse-ring-green 2s infinite;
+        }
+        .btn-pulse-slate {
+            animation: pulse-ring-slate 2s infinite;
+            animation-delay: 1s; /* Chạy lệch nhịp với nút kia cho sinh động */
+        }
+
+        /* Hiệu ứng cho nút FAB Khám bệnh */
+        .fab-button {
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fab-button:hover {
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+            transform: translateY(-5px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+    /* CSS để tạo dấu gạch ngang phân số */
+    .fraction {
+        display: inline-flex;
+        flex-direction: column;
+        vertical-align: middle;
+        text-align: center;
+        margin: 0 3px;
+    }
+    .numerator { border-bottom: 2px solid #94a3b8; padding: 2px 10px; }
+    .denominator { padding: 2px 10px; }
+    .formula-flex { display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation Menu (Tabs) -->
+    <div class="bg-slate-900 border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <nav class="flex space-x-2 md:space-x-8 overflow-x-auto custom-scrollbar" aria-label="Tabs">
+                <button onclick="openTab(event, 'tab-infographic')" class="tab-btn active text-cyan-400 border-b-2 border-cyan-400 whitespace-nowrap py-4 px-1 text-sm md:text-base font-semibold transition-colors duration-200" aria-current="page">
+                    📊 Giải pháp OEE
+                </button>
+                <button onclick="openTab(event, 'tab-doc2')" class="tab-btn text-slate-400 hover:text-slate-200 border-b-2 border-transparent whitespace-nowrap py-4 px-1 text-sm md:text-base font-medium transition-colors duration-200">
+                    🌐 WebAccess/SCADA
+                </button>
+                <button onclick="openTab(event, 'tab-doc3')" class="tab-btn text-slate-400 hover:text-slate-200 border-b-2 border-transparent whitespace-nowrap py-4 px-1 text-sm md:text-base font-medium transition-colors duration-200">
+                    ⚡ Hệ Thống EMS
+                </button>
+                <button onclick="openTab(event, 'tab-mes')" class="tab-btn text-slate-400 hover:text-slate-200 border-b-2 border-transparent whitespace-nowrap py-4 px-1 text-sm md:text-base font-medium transition-colors duration-200">
+                    🏭 Hệ Thống MES
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <!-- TAB 1: Infographic OEE -->
+    <div id="tab-infographic" class="tab-content block">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <header class="text-center mb-16">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 uppercase">
+                    Giải Pháp <span class="gradient-text">iFactory</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto">
+                    Tối Ưu Hóa Sản Xuất Bằng Chỉ Số OEE (Overall Equipment Effectiveness)
+                </p>
+            </header>
+
+            <section class="glass-card p-6 md:p-10 mb-12">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-4 text-cyan-400">1. Tầm Quan Trọng Của OEE</h2>
+                        <p class="text-slate-300 text-lg mb-6 leading-relaxed">
+                            OEE là tiêu chuẩn vàng trong sản xuất để đo lường năng suất thực sự của máy móc và dây chuyền. Nó cho biết phần trăm thời gian sản xuất thực sự mang lại hiệu quả cao nhất.
+                        </p>
+
+<div class="bg-slate-800 rounded-2xl p-5 border border-slate-700/50 max-w-5xl mx-auto shadow-2xl">
+    <h3 class="text-base font-semibold mb-6 text-slate-400 text-center uppercase tracking-[0.2em]">Công Thức Cốt Lõi OEE</h3>
+    
+    <div class="grid grid-cols-1 md:flex md:items-center md:justify-between gap-4 mb-5">
+        
+        <button onclick="showDetail('availability')" 
+            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-orange-400/30 hover:border-orange-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            <span class="relative block text-lg font-bold text-orange-400 group-hover:scale-105 transition-transform">Khả dụng</span>
+            
+            <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-orange-300 transition-colors">Availability</span>
+        </button>
+
+        <div class="flex justify-center items-center opacity-30">
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </div>
+
+        <button onclick="showDetail('performance')" 
+            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-cyan-400/30 hover:border-cyan-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            <span class="relative block text-lg font-bold text-cyan-400 group-hover:scale-105 transition-transform">Hiệu suất</span>
+            
+            <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-cyan-300 transition-colors">Performance</span>
+        </button>
+
+        <div class="flex justify-center items-center opacity-30">
+            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </div>
+
+        <button onclick="showDetail('quality')" 
+            class="relative overflow-hidden aspect-square w-full md:w-40 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-green-400/30 hover:border-green-400 transition-all duration-500 group p-4 flex flex-col justify-center items-center">
+            <span class="relative block text-lg font-bold text-green-400 group-hover:scale-105 transition-transform">Chất lượng</span>
+            
+            <span class="relative text-[12px] font-medium text-slate-400 mt-1 capitalize tracking-wide opacity-90 group-hover:text-green-300 transition-colors">Quality</span>
+        </button>
+
+    </div>
+    
+    <div id="detail-container" class="bg-slate-900/40 rounded-xl p-4 border border-slate-700/50 min-h-[100px] flex items-center justify-center transition-all duration-300">
+        <p class="text-slate-500 text-xs italic text-center">Chọn chỉ số để xem phân tích.</p>
+    </div>
+</div>
+
+
+                    </div>
+                    
+                    <div class="w-full flex flex-col items-center">
+                        <h3 class="text-center text-lg text-slate-300 mb-2">Tiêu Chuẩn OEE Đẳng Cấp Thế Giới (World-Class)</h3>
+                        <div class="chart-container">
+                            <canvas id="oeeDonutChart"></canvas>
+                        </div>
+                        
+                        <!-- 2 Nút bấm chú thích nổi bật mới -->
+                        <div class="flex flex-row justify-center items-stretch gap-4 w-full mt-4">
+                            <!-- Nút OEE Đạt Chuẩn -->
+                            <button onclick="openOeeModal(0)" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-green-500/60 hover:border-green-400 rounded-xl p-3 transition-all duration-300 transform hover:-translate-y-1 group relative overflow-hidden btn-pulse-green cursor-pointer">
+                                <div class="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative z-10 flex flex-col items-center">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-3 h-3 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981]"></span>
+                                        <span class="font-bold text-green-400 text-sm md:text-base whitespace-nowrap">OEE Đạt Chuẩn</span>
+                                    </div>
+                                    <div class="text-xs text-slate-300 whitespace-nowrap mb-2">(Sản Xuất Hiệu Quả)</div>
+                                    <div class="text-[11px] font-semibold text-green-300 opacity-80 group-hover:opacity-100 flex items-center gap-1 bg-green-900/40 px-2 py-1 rounded-full transition-opacity">
+                                        <span class="inline-block animate-bounce">👆</span> Nhấn xem chi tiết
+                                    </div>
+                                </div>
+                            </button>
+                            
+                            <!-- Nút Tổn Thất -->
+                            <button onclick="openOeeModal(1)" class="flex-1 bg-slate-800/90 hover:bg-slate-700 border border-slate-400/60 hover:border-slate-300 rounded-xl p-3 transition-all duration-300 transform hover:-translate-y-1 group relative overflow-hidden btn-pulse-slate cursor-pointer">
+                                <div class="absolute inset-0 bg-gradient-to-br from-slate-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                <div class="relative z-10 flex flex-col items-center">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="w-3 h-3 rounded-full bg-[#334155] border border-slate-400 group-hover:bg-slate-500 transition-colors"></span>
+                                        <span class="font-bold text-slate-300 group-hover:text-white text-sm md:text-base whitespace-nowrap">Tổn Thất</span>
+                                    </div>
+                                    <div class="text-xs text-slate-400 whitespace-nowrap mb-2">Cần Cải Thiện</div>
+                                    <div class="text-[11px] font-semibold text-slate-300 opacity-80 group-hover:opacity-100 flex items-center gap-1 bg-slate-700/50 px-2 py-1 rounded-full transition-opacity">
+                                        <span class="inline-block animate-bounce">👆</span> Nhấn xem chi tiết
+                                    </div>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-8 text-center text-white">2. Vượt Qua Nỗi Đau Của Nhà Máy Truyền Thống</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container glass-card p-6 h-full flex flex-col justify-center">
+                        <h3 class="text-center text-lg text-slate-300 mb-4">So Sánh Năng Lực Vận Hành</h3>
+                        <canvas id="radarCompareChart"></canvas>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-red-500">
+                            <div class="text-3xl mb-2">&#128221;</div>
+                            <h4 class="text-lg font-bold text-red-400 mb-2">Thu Thập Thủ Công</h4>
+                            <p class="text-sm text-slate-400">Dữ liệu ghi bằng giấy/Excel dẫn đến sai lệch, thiếu trung thực và tốn thời gian tổng hợp.</p>
+                        </div>
+                        <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-red-500">
+                            <div class="text-3xl mb-2">&#128336;</div>
+                            <h4 class="text-lg font-bold text-red-400 mb-2">Phản Ứng Chậm Trễ</h4>
+                            <p class="text-sm text-slate-400">Quản lý chỉ biết vấn đề sau khi ca làm việc kết thúc, không thể can thiệp kịp thời.</p>
+                        </div>
+                        <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-orange-500">
+                            <div class="text-3xl mb-2">&#9888;&#65039;</div>
+                            <h4 class="text-lg font-bold text-orange-400 mb-2">Điểm Mù "Dừng Vặt"</h4>
+                            <p class="text-sm text-slate-400">Bỏ qua các lần dừng máy ngắn (Micro-stops), kẻ thù thầm lặng ăn mòn hiệu suất dây chuyền.</p>
+                        </div>
+                        <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-orange-500">
+                            <div class="text-3xl mb-2">&#128295;</div>
+                            <h4 class="text-lg font-bold text-orange-400 mb-2">Bảo Trì Bị Động</h4>
+                            <p class="text-sm text-slate-400">Chỉ sửa khi máy hỏng, chi phí cao và làm gián đoạn toàn bộ hoạt động sản xuất.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass-card p-6 md:p-10 mb-12">
+                <h2 class="text-3xl font-bold mb-4 text-cyan-400 text-center">3. Nhận Diện & Tiêu Diệt "6 Tổn Thất Lớn"</h2>
+                <p class="text-slate-300 text-center max-w-2xl mx-auto mb-8">Hệ thống iFactory tự động phân loại nguyên nhân gây giảm OEE, giúp ban quản lý nhắm đúng mục tiêu cải tiến.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-center">
+                    <div class="bg-slate-800 rounded-lg p-4 border border-orange-500/50">
+                        <h4 class="text-orange-400 font-bold mb-2 uppercase tracking-wide">Tổn Thất Khả Dụng</h4>
+                        <ul class="text-slate-300 text-sm space-y-2">
+                            <li>1. Hỏng hóc thiết bị</li>
+                            <li>2. Cài đặt & Điều chỉnh</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4 border border-cyan-500/50">
+                        <h4 class="text-cyan-400 font-bold mb-2 uppercase tracking-wide">Tổn Thất Hiệu Suất</h4>
+                        <ul class="text-slate-300 text-sm space-y-2">
+                            <li>3. Dừng vặt & Không tải</li>
+                            <li>4. Giảm tốc độ máy</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-800 rounded-lg p-4 border border-green-500/50">
+                        <h4 class="text-green-400 font-bold mb-2 uppercase tracking-wide">Tổn Thất Chất Lượng</h4>
+                        <ul class="text-slate-300 text-sm space-y-2">
+                            <li>5. Phế phẩm khởi động</li>
+                            <li>6. Phế phẩm sản xuất</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="sixLossesChart"></canvas>
+                </div>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-8 text-center text-white">4. Bốn Trụ Cột Của Giải Pháp iFactory</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    <div class="glass-card p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300">
+                        <div class="text-5xl mb-4">&#128225;</div>
+                        <h3 class="text-xl font-bold text-cyan-400 mb-3">IoT Data Collection</h3>
+                        <p class="text-sm text-slate-300">Kết nối trực tiếp PLC/Cảm biến. Tự động thu thập sản lượng, tốc độ, thời gian chạy/dừng 100% không cần con người.</p>
+                    </div>
+
+                    <div class="glass-card p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300">
+                        <div class="text-5xl mb-4">&#128187;</div>
+                        <h3 class="text-xl font-bold text-blue-400 mb-3">Real-time & Andon</h3>
+                        <p class="text-sm text-slate-300">Dashboard hiển thị thời gian thực. Hệ thống Andon cảnh báo sự cố ngay lập tức qua SMS/App tới tổ trưởng, bảo trì.</p>
+                    </div>
+
+                    <div class="glass-card p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300">
+                        <div class="text-5xl mb-4">&#128200;</div>
+                        <h3 class="text-xl font-bold text-orange-400 mb-3">Phân Tích Tổn Thất</h3>
+                        <p class="text-sm text-slate-300">Tự động phân loại 6 tổn thất lớn (Pareto). Xác định chính xác "Nút thắt cổ chai" (Bottleneck) trong dây chuyền.</p>
+                    </div>
+
+                    <div class="glass-card p-6 flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300">
+                        <div class="text-5xl mb-4">&#128376;&#65039;</div>
+                        <h3 class="text-xl font-bold text-green-400 mb-3">Bảo Trì Dự Đoán</h3>
+                        <p class="text-sm text-slate-300">Phân tích xu hướng (Trend analysis) dự đoán tuổi thọ linh kiện. Lên lịch bảo trì phòng ngừa trước khi máy hỏng.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                <div class="glass-card p-8 lg:col-span-1 flex flex-col justify-center items-center text-center border-t-4 border-cyan-400">
+                    <h2 class="text-2xl font-bold mb-2">Lợi Ích Đầu Tư (ROI)</h2>
+                    <div class="text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 my-4">
+                        10% - 20%
+                    </div>
+                    <p class="text-lg text-slate-300 font-semibold mb-2">Tăng Trưởng Năng Suất</p>
+                    <p class="text-sm text-slate-400">Triệt tiêu thời gian chết & tối ưu tốc độ máy nhờ dữ liệu minh bạch.</p>
+                </div>
+                <div class="glass-card p-8 lg:col-span-2">
+                    <h3 class="text-xl font-bold mb-6 text-white border-b border-slate-700 pb-2">Giá Trị Cốt Lõi Mang Lại</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Ra quyết định dựa trên dữ liệu (Data-driven):</strong>
+                                <p class="text-sm text-slate-400">Ban giám đốc có cái nhìn minh bạch 100% về xưởng sản xuất mọi lúc, mọi nơi.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Giảm thiểu phế phẩm:</strong>
+                                <p class="text-sm text-slate-400">Phát hiện sớm bất thường, kiểm soát chất lượng chặt chẽ liên tục.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Tối ưu chi phí lao động:</strong>
+                                <p class="text-sm text-slate-400">Giảm nhân sự làm việc thủ công, tăng hiệu quả đội bảo trì.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Nền tảng chuyển đổi số:</strong>
+                                <p class="text-sm text-slate-400">Bước đệm hoàn hảo để tích hợp với hệ thống ERP/MES cao cấp.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="glass-card p-6 md:p-10">
+                <h2 class="text-3xl font-bold mb-10 text-center text-cyan-400">5. Lộ Trình Triển Khai (Roadmap)</h2>
+                <div class="max-w-4xl mx-auto pl-4">
+                    
+                    <div class="timeline-container mb-8">
+                        <div class="timeline-dot"></div>
+                        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-md ml-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-white">Giai đoạn 1: Khảo sát & Đánh giá</h3>
+                                <span class="bg-slate-700 text-cyan-300 text-xs px-2 py-1 rounded font-semibold">2-4 Tuần</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Khảo sát hiện trạng máy móc, hạ tầng mạng, quy trình. Lựa chọn 1-2 dây chuyền "nút thắt cổ chai" (Bottleneck) để làm thí điểm.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-container mb-8">
+                        <div class="timeline-dot" style="background-color: #3B82F6;"></div>
+                        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-md ml-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-white">Giai đoạn 2: Triển khai Thí điểm (Pilot)</h3>
+                                <span class="bg-slate-700 text-blue-300 text-xs px-2 py-1 rounded font-semibold">1-2 Tháng</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Lắp đặt phần cứng (IoT Gateway, Sensor), cấu hình phần mềm. Đào tạo công nhân, quản lý cách đọc hiểu và tương tác hệ thống.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-container mb-8">
+                        <div class="timeline-dot" style="background-color: #8B5CF6;"></div>
+                        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-md ml-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-white">Giai đoạn 3: Đánh giá và Mở rộng (Roll-out)</h3>
+                                <span class="bg-slate-700 text-purple-300 text-xs px-2 py-1 rounded font-semibold">3-6 Tháng</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Đo lường sự cải thiện OEE thực tế từ Pilot. Chuẩn hóa quy trình và nhân rộng giải pháp ra toàn bộ nhà máy.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-container">
+                        <div class="timeline-dot" style="background-color: #10B981;"></div>
+                        <div class="bg-slate-800 p-5 rounded-lg border border-slate-700 shadow-md ml-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-xl font-bold text-white">Giai đoạn 4: Tối ưu liên tục (Continuous)</h3>
+                                <span class="bg-slate-700 text-green-300 text-xs px-2 py-1 rounded font-semibold">Ongoing</span>
+                            </div>
+                            <p class="text-slate-400 text-sm">Áp dụng công cụ Lean Manufacturing (Kaizen, 5S) kết hợp với dữ liệu thực tế từ hệ thống để liên tục cải tiến.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- TAB 2: WebAccess/SCADA -->
+    <div id="tab-doc2" class="tab-content hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <!-- Header -->
+            <header class="text-center mb-16">
+                <div class="inline-block bg-blue-900/50 text-blue-300 px-4 py-1 rounded-full text-sm font-semibold mb-4 border border-blue-500/30">
+                    Advantech Industrial Automation
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 uppercase">
+                    Phần Mềm <span class="text-blue-500">WebAccess/SCADA</span>
+                </h1>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    Nền tảng phần mềm SCADA 100% dựa trên Web, tiên phong cho các ứng dụng IIoT
+                </p>
+            </header>
+
+            <!-- Giới thiệu -->
+            <section class="glass-card p-6 md:p-10 mb-12 flex flex-col md:flex-row gap-8 items-center border-l-4 border-blue-500">
+                <div class="flex-1">
+                    <h2 class="text-3xl font-bold mb-4 text-cyan-400">Nền Tảng Cốt Lõi Cho IIoT</h2>
+                    <p class="text-slate-300 text-lg mb-4 leading-relaxed">
+                        Advantech WebAccess/SCADA là phần mềm giám sát và điều khiển dựa trên trình duyệt web đầu tiên trên thế giới. Nó cung cấp một kiến trúc mở, mạnh mẽ để tích hợp các thiết bị dưới nhà máy và hệ thống quản lý IT cấp cao.
+                    </p>
+                    <ul class="space-y-3 text-slate-300 font-medium">
+                        <li class="flex items-center"><span class="text-green-400 text-xl mr-3">&#10004;</span> Giám sát & cấu hình 100% qua trình duyệt.</li>
+                        <li class="flex items-center"><span class="text-green-400 text-xl mr-3">&#10004;</span> Bảng điều khiển (Dashboard) HTML5 đa nền tảng.</li>
+                        <li class="flex items-center"><span class="text-green-400 text-xl mr-3">&#10004;</span> Hỗ trợ hoàn hảo MQTT, RESTful API cho Cloud & ERP.</li>
+                    </ul>
+                </div>
+                <div class="flex-1 w-full bg-slate-800 rounded-xl p-8 border border-slate-700 text-center shadow-inner">
+                    <div class="text-7xl mb-6 text-blue-400">&#127760;</div>
+                    <h3 class="text-2xl font-bold text-white mb-3">Truy Cập Mọi Nơi</h3>
+                    <p class="text-slate-400">Giám sát toàn diện nhà máy qua PC, Tablet, hay Smartphone thông qua các trình duyệt tiêu chuẩn (Chrome, Edge, Safari) mà không cần cài đặt bất kỳ Client App nào.</p>
+                </div>
+            </section>
+
+            <!-- Tính năng -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-10 text-center text-white">6 Đặc Điểm Nổi Bật Của WebAccess/SCADA</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-orange-500">
+                        <div class="text-5xl mb-5">&#128241;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">HTML5 Dashboard</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Cung cấp bộ công cụ Widget phong phú (biểu đồ, thanh đo, xu hướng) trên nền HTML5. Người dùng có thể tự tạo trang tổng quan (Dashboard) trực quan bằng thao tác kéo thả.</p>
+                    </div>
+                    
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-cyan-500">
+                        <div class="text-5xl mb-5">&#128268;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Kết Nối Đa Thiết Bị</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Tích hợp sẵn hơn 200 Driver giao tiếp miễn phí cho các loại PLC (Siemens, Mitsubishi, Omron...), RTU, I/O module và các chuẩn công nghiệp (Modbus, OPC UA/DA).</p>
+                    </div>
+                    
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-purple-500">
+                        <div class="text-5xl mb-5">&#9729;&#65039;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Sẵn Sàng Cho Cloud & IIoT</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Tích hợp MQTT Broker/Client giúp đẩy dữ liệu dễ dàng lên Cloud (Azure, AWS). Hỗ trợ RESTful API để trao đổi dữ liệu hai chiều với hệ thống quản trị MES/ERP.</p>
+                    </div>
+                    
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-green-500">
+                        <div class="text-5xl mb-5">&#128506;&#65039;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Tích Hợp Bản Đồ (GIS)</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Hỗ trợ hiển thị vị trí thiết bị trên Google Maps hoặc bản đồ vệ tinh GPS. Giải pháp hoàn hảo cho các dự án điện lực, trạm bơm nước, năng lượng mặt trời phân tán.</p>
+                    </div>
+                    
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-red-500">
+                        <div class="text-5xl mb-5">&#128680;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Hệ Thống Alarm & Báo Cáo</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Cảnh báo sự cố tức thời qua Email, SMS, LINE app, WeChat... Hỗ trợ kết xuất báo cáo dữ liệu định kỳ tự động ra định dạng Excel, PDF cho ban quản lý.</p>
+                    </div>
+
+                    <div class="glass-card p-8 hover:-translate-y-2 transition-transform duration-300 border-t-4 border-blue-500">
+                        <div class="text-5xl mb-5">&#128737;&#65039;</div>
+                        <h3 class="text-xl font-bold text-white mb-3">Kiến Trúc Dự Phòng (Redundant)</h3>
+                        <p class="text-sm text-slate-400 leading-relaxed">Hỗ trợ kiến trúc SCADA Node Redundancy (Dự phòng máy chủ). Nếu máy chủ chính gặp sự cố, hệ thống sẽ tự động chuyển sang máy chủ phụ, đảm bảo Zero Downtime.</p>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- TAB 3: Hệ Thống EMS -->
+    <div id="tab-doc3" class="tab-content hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Header -->
+            <header class="text-center mb-16">
+                <div class="inline-block bg-yellow-900/50 text-yellow-400 px-4 py-1 rounded-full text-sm font-semibold mb-4 border border-yellow-500/30">
+                    Delta DIAEnergie
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 uppercase">
+                    Hệ Thống Quản Lý <span class="text-yellow-400">Năng Lượng (EMS)</span>
+                </h1>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    Giải pháp đo lường, giám sát và phân tích dữ liệu tiêu thụ điện năng hướng tới tiêu chuẩn Nhà máy Xanh & Sạch
+                </p>
+            </header>
+
+            <!-- Thực trạng -->
+            <section class="mb-12">
+                <h2 class="text-3xl font-bold mb-8 text-center text-white">Thực Trạng Lãng Phí Năng Lượng Tại Nhà Máy</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-red-500 relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-7xl opacity-10">&#128221;</div>
+                        <h4 class="text-lg font-bold text-red-400 mb-2">Ghi Chép Thủ Công</h4>
+                        <p class="text-sm text-slate-400">Dữ liệu không được thu thập liên tục hoặc ghi nhận bằng tay, dẫn đến sai sót và không thể phân tích tối ưu.</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-red-500 relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-7xl opacity-10">&#128680;</div>
+                        <h4 class="text-lg font-bold text-red-400 mb-2">Thiếu Tính Chủ Động</h4>
+                        <p class="text-sm text-slate-400">Chỉ thực hiện rà soát một lần khi có sự đột biến đáng báo động về hóa đơn tiền điện hoặc sự cố.</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-orange-500 relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-7xl opacity-10">&#128104;&#8205;&#128295;</div>
+                        <h4 class="text-lg font-bold text-orange-400 mb-2">Nhân Lực Hạn Chế</h4>
+                        <p class="text-sm text-slate-400">Tổ chức không dành đủ nguồn lực và đội ngũ chuyên môn ưu tiên cho việc giám sát năng lượng chuyên sâu.</p>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-lg border-l-4 border-orange-500 relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 text-7xl opacity-10">&#128200;</div>
+                        <h4 class="text-lg font-bold text-orange-400 mb-2">Rào Cản Đầu Tư Ban Đầu</h4>
+                        <p class="text-sm text-slate-400">Chi phí triển khai thường là một trở ngại, khiến nhiều nhà máy chậm tiếp cận được các bài toán lợi ích bền vững về dài hạn.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tính năng DIAEnergie -->
+            <section class="glass-card p-6 md:p-10 mb-12 border-t-4 border-yellow-500">
+                <h2 class="text-3xl font-bold mb-4 text-yellow-400 text-center">Chức Năng Cốt Lõi Của Phần Mềm DIAEnergie</h2>
+                <p class="text-slate-300 text-center max-w-2xl mx-auto mb-10">Tự động hóa hoàn toàn quá trình thu thập và xử lý dữ liệu tiêu thụ điện, nước, khí nén...</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex items-start bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="text-4xl mr-4 bg-slate-900 p-3 rounded-lg text-yellow-400">&#128202;</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Giám Sát Thời Gian Thực</h3>
+                            <p class="text-sm text-slate-400">Trực quan hóa biểu đồ phụ tải. Theo dõi mức tiêu thụ năng lượng của từng máy móc, dây chuyền, xưởng mọi lúc mọi nơi.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="text-4xl mr-4 bg-slate-900 p-3 rounded-lg text-red-400">&#9888;&#65039;</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Cảnh Báo Bất Thường</h3>
+                            <p class="text-sm text-slate-400">Hệ thống thông báo tức thời các sự kiện vượt ngưỡng hoặc sự cố điện qua Tin nhắn SMS/Email tới ban quản lý.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="text-4xl mr-4 bg-slate-900 p-3 rounded-lg text-cyan-400">&#128200;</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Phân Tích Đa Chiều</h3>
+                            <p class="text-sm text-slate-400">So sánh mức tiêu thụ của phụ tải theo ca, ngày, tháng, quý... Phân tích hiệu suất vận hành máy để tìm ra điểm gây lãng phí.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start bg-slate-800/50 p-6 rounded-xl border border-slate-700">
+                        <div class="text-4xl mr-4 bg-slate-900 p-3 rounded-lg text-green-400">&#128193;</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2">Lưu Trữ & Báo Cáo</h3>
+                            <p class="text-sm text-slate-400">Dữ liệu được lưu trữ liên tục và bảo mật. Dễ dàng truy xuất và xuất báo cáo tự động phục vụ các cuộc họp kiểm toán năng lượng.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lợi ích -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass-card p-8 flex flex-col justify-center text-center bg-gradient-to-br from-slate-800 to-slate-900">
+                    <div class="text-6xl mb-4">&#127758;</div>
+                    <h2 class="text-2xl font-bold text-green-400 mb-4">Hướng Tới Sản Xuất Xanh</h2>
+                    <p class="text-slate-300">Đáp ứng khắt khe các tiêu chuẩn doanh nghiệp sản xuất xanh, sạch và phát triển bền vững. Ghi điểm tuyệt đối với các đối tác kinh doanh và nhà nhập khẩu toàn cầu.</p>
+                </div>
+
+                <div class="glass-card p-8">
+                    <h3 class="text-2xl font-bold mb-6 text-yellow-400 border-b border-slate-700 pb-2">Giá Trị Cốt Lõi Mang Lại</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Minh bạch chi phí sản xuất:</strong>
+                                <p class="text-sm text-slate-400">Định lượng chính xác năng lượng tiêu tốn cho từng <span class="text-yellow-300">Ca làm việc</span>, <span class="text-yellow-300">Bộ phận</span>, và <span class="text-yellow-300">Đơn vị sản phẩm</span>.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Điều chỉnh lịch trình (Giảm giá thành):</strong>
+                                <p class="text-sm text-slate-400">Phân tích chi phí theo khung giờ để bố trí lại sản xuất, tận dụng tối đa giờ điện thấp điểm/bình thường.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Xác định điểm "Mù" sự cố:</strong>
+                                <p class="text-sm text-slate-400">Tìm ra chính xác nguyên nhân, thời gian và vị trí của các sự cố sụt áp, quá tải điện năng.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-3 text-xl">&#10004;</span>
+                            <div>
+                                <strong class="text-white">Hoạch định tương lai:</strong>
+                                <p class="text-sm text-slate-400">Đưa ra kế hoạch chuẩn xác cho việc sử dụng thiết bị, bảo dưỡng định kỳ và phân bổ ngân sách tối ưu.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- TAB 4: Hệ Thống MES -->
+    <div id="tab-mes" class="tab-content hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Header -->
+            <header class="text-center mb-16">
+                <div class="inline-block bg-purple-900/50 text-purple-400 px-4 py-1 rounded-full text-sm font-semibold mb-4 border border-purple-500/30">
+                    Sản Xuất Thông Minh (Smart Manufacturing)
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 uppercase">
+                    Hệ Thống Thực Thi <span class="text-purple-400">Sản Xuất (MES)</span>
+                </h1>
+                <p class="text-xl text-slate-300 max-w-3xl mx-auto">
+                    Số hóa toàn diện quy trình nhà máy, kết nối xuyên suốt từ tầng quản trị (ERP) xuống tầng thiết bị (SCADA/IoT).
+                </p>
+            </header>
+
+            <!-- Kiến trúc -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold mb-8 text-center text-white">Vị Trí Của MES Trong Tháp Tự Động Hóa</h2>
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 text-center">
+                    <div class="glass-card p-6 w-full md:w-1/3 border-t-4 border-blue-500">
+                        <div class="text-4xl mb-2">&#127970;</div>
+                        <h3 class="font-bold text-blue-400 text-lg">Tầng Quản Trị (ERP)</h3>
+                        <p class="text-sm text-slate-400 mt-2">Kế hoạch kinh doanh, Tài chính, Mua hàng, Quản lý Nhân sự.</p>
+                    </div>
+                    <div class="text-4xl text-slate-500 rotate-90 md:rotate-0">&#8644;</div>
+                    <div class="glass-card p-8 w-full md:w-1/3 border-t-4 border-purple-500 transform scale-105 shadow-purple-500/20 shadow-2xl relative">
+                        <div class="absolute -top-3 -right-3 flex h-6 w-6">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-6 w-6 bg-purple-500 text-xs justify-center items-center text-white font-bold">!</span>
+                        </div>
+                        <div class="text-5xl mb-2">&#128187;</div>
+                        <h3 class="font-bold text-purple-400 text-xl">Tầng Thực Thi (MES)</h3>
+                        <p class="text-sm text-slate-300 mt-2">Trái tim dữ liệu. Quản lý lệnh sản xuất, chất lượng, truy xuất nguồn gốc và tiến độ thực tế.</p>
+                    </div>
+                    <div class="text-4xl text-slate-500 rotate-90 md:rotate-0">&#8644;</div>
+                    <div class="glass-card p-6 w-full md:w-1/3 border-t-4 border-cyan-500">
+                        <div class="text-4xl mb-2">&#9881;&#65039;</div>
+                        <h3 class="font-bold text-cyan-400 text-lg">Tầng Thiết Bị (SCADA/IoT)</h3>
+                        <p class="text-sm text-slate-400 mt-2">Điều khiển PLC, thu thập thông số kỹ thuật, nhiệt độ, trạng thái chạy/dừng (OEE).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tính năng cốt lõi -->
+            <section class="glass-card p-6 md:p-10 mb-12 border-l-4 border-purple-500">
+                <h2 class="text-3xl font-bold mb-8 text-purple-400 text-center">4 Phân Hệ Cốt Lõi Của Hệ Thống MES</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl bg-slate-900 p-3 rounded-full text-blue-400">&#128203;</div>
+                            <h3 class="text-xl font-bold text-white">1. Quản Lý Lệnh Sản Xuất</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">Nhận lệnh trực tiếp từ hệ thống ERP, lập lịch trình (Scheduling) chi tiết xuống từng máy, từng ca. Số hóa hoàn toàn lệnh sản xuất giấy (Paperless), theo dõi tiến độ % hoàn thành theo thời gian thực.</p>
+                    </div>
+                    
+                    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl bg-slate-900 p-3 rounded-full text-green-400">&#128269;</div>
+                            <h3 class="text-xl font-bold text-white">2. Truy Xuất Nguồn Gốc (Traceability)</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">Gắn mã Barcode/QR Code cho từng lô hàng. Quét và ghi nhận toàn bộ lịch sử vòng đời sản phẩm: nhân công nào làm, làm trên máy nào, dùng nguyên vật liệu gì, thông số máy lúc đó ra sao.</p>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl bg-slate-900 p-3 rounded-full text-yellow-400">&#128174;</div>
+                            <h3 class="text-xl font-bold text-white">3. Quản Lý Chất Lượng (QMS)</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">Số hóa các biên bản kiểm tra chất lượng (QC), tích hợp công cụ cảnh báo xu hướng lỗi SPC. Nếu phát hiện sai số, hệ thống sẽ tự động chặn không cho chuyển sản phẩm sang công đoạn tiếp theo.</p>
+                    </div>
+
+                    <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="text-3xl bg-slate-900 p-3 rounded-full text-orange-400">&#128230;</div>
+                            <h3 class="text-xl font-bold text-white">4. Quản Lý WIP & Tồn Kho Xưởng</h3>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed">Kiểm soát chặt chẽ các bán thành phẩm (WIP - Work in Process) đang nằm rải rác trên dây chuyền. Tránh thất thoát, dư thừa vật tư và tối ưu hóa không gian lưu trữ tại xưởng sản xuất.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Popup Modal Chi Tiết OEE -->
+    <div id="oeeDetailModal" class="hidden fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm items-center justify-center p-4 transition-all duration-300">
+        <div class="glass-card bg-slate-800 p-8 w-full max-w-2xl relative shadow-2xl border border-slate-600">
+            <button onclick="closeOeeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
+            <h3 id="oeeModalTitle" class="text-2xl font-bold mb-4"></h3>
+            <div id="oeeModalContent" class="text-base leading-relaxed"></div>
+            <div class="mt-8 text-right">
+                <button onclick="closeOeeModal()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-medium transition-colors">Đóng lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Modal Bắt Mạch Nỗi Đau -->
+    <div id="painPointsModal" class="hidden fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-md items-center justify-center p-4 transition-all duration-300">
+        <div class="glass-card bg-slate-800 p-6 md:p-8 w-full max-w-4xl relative shadow-2xl border border-slate-600 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closePainPointsModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-3xl leading-none">&times;</button>
+            
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-4">
+                <span class="text-4xl">🩺</span>
+                <h3 class="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">Bộ câu hỏi Khảo sát Hiện trạng Sản xuất</h3>
+            </div>
+            
+            <p class="text-slate-300 mb-6 italic">Hãy dùng những câu hỏi gợi ý này để giúp ban quản lý nhận ra các "nỗi đau" tiềm ẩn trong quy trình vận hành hiện tại:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nhóm 1 -->
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-cyan-400 font-bold mb-3 flex items-center gap-2"><span class="text-xl">📊</span> Vận Hành & Hiệu Suất (OEE)</h4>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Dữ liệu sản lượng và thời gian máy dừng ghi chép thủ công (sổ/Excel) có gây chậm trễ, thiếu trung thực?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Quản lý xưởng có phải chờ hết ca làm việc mới biết dây chuyền không đạt mục tiêu?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Máy hay bị sự cố "dừng vặt" vài phút nhưng làm hao hụt năng suất trầm trọng mà không rõ nguyên nhân?</li>
+                    </ul>
+                </div>
+                <!-- Nhóm 2 -->
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-blue-400 font-bold mb-3 flex items-center gap-2"><span class="text-xl">🌐</span> Giám Sát & Kết Nối (SCADA)</h4>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Nhà máy có gặp khó khăn khi lấy dữ liệu tập trung từ nhiều loại máy móc khác hãng (Siemens, Mitsubishi...)?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Giám đốc khi đi công tác có thể mở điện thoại để xem trực tiếp tốc độ, tình trạng chạy/dừng của từng máy không?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Hệ thống có tự động gửi tin nhắn (Zalo/SMS) báo lỗi tức thời cho người phụ trách khi có sự cố?</li>
+                    </ul>
+                </div>
+                <!-- Nhóm 3 -->
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-yellow-400 font-bold mb-3 flex items-center gap-2"><span class="text-xl">⚡</span> Lãng Phí Năng Lượng (EMS)</h4>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Hóa đơn tiền điện tăng vọt nhưng nhà máy không tra cứu được rò rỉ hay lãng phí ở phân xưởng/ca nào?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Đã bao giờ tính toán được chính xác chi phí tiền điện/nước/khí nén cho đúng 1 đơn vị sản phẩm chưa?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Nhà máy đã tối ưu được việc đẩy các máy tiêu thụ cao sang chạy vào giờ điện thấp điểm để cắt giảm giá thành chưa?</li>
+                    </ul>
+                </div>
+                <!-- Nhóm 4 -->
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-700">
+                    <h4 class="text-purple-400 font-bold mb-3 flex items-center gap-2"><span class="text-xl">🏭</span> Quy Trình & Chất Lượng (MES)</h4>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Việc giao lệnh sản xuất vẫn dùng bản in giấy? Tiến độ % hoàn thành không được báo cáo real-time về khối văn phòng?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Khi có lô hàng bị trả về, mất bao lâu để tra cứu nguồn gốc: Ai làm, máy nào, vật liệu của nhà cung cấp nào?</li>
+                        <li class="flex items-start gap-2"><span class="text-red-400 mt-0.5">●</span> Khi phát hiện sinh ra hàng lỗi, hệ thống có cảnh báo và chặn không cho chuyển sang công đoạn tiếp theo không?</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mt-8 text-right border-t border-slate-700 pt-4">
+                <button onclick="closePainPointsModal()" class="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white px-8 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-blue-500/30">Đóng lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút Float (Nổi) "Khám Bệnh Nhà Máy" -->
+    <button onclick="openPainPointsModal()" class="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-[90] bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-4 rounded-full fab-button group flex items-center gap-0 hover:gap-3 overflow-hidden cursor-pointer" title="Bộ câu hỏi khám bệnh nhà máy">
+        <svg class="w-7 h-7 flex-shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-[200px] transition-all duration-500 ease-in-out font-medium text-sm md:text-base">
+            Rà soát Quy trình
+        </span>
+    </button>
+
+    <!-- Scripts -->
+    <script>
+        // Data cho Popup Modal
+        const oeeDetailsData = [
+            {
+                title: "OEE Đạt Chuẩn (Sản Xuất Hiệu Quả)",
+                color: "text-green-400",
+                content: `
+                    <div class="space-y-4 text-slate-300">
+                        <p>Mức <strong class="text-green-400 text-xl">85%</strong> được công nhận là tiêu chuẩn <strong>World-Class (Đẳng cấp thế giới)</strong>. Điều này có nghĩa là dây chuyền của bạn đang hoạt động cực kỳ tối ưu và mang lại lợi nhuận xuất sắc.</p>
+                        <ul class="space-y-3 mt-4">
+                            <li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10004;</span> <div><strong>Khả dụng cao:</strong> Máy móc vận hành liên tục, ít bị gián đoạn do hỏng hóc đột xuất hay chờ đợi vật tư.</div></li>
+                            <li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10004;</span> <div><strong>Hiệu suất tối đa:</strong> Tốc độ sản xuất đạt mức thiết kế lý tưởng, không bị chạy chậm hay kẹt vặt.</div></li>
+                            <li class="flex items-start"><span class="text-green-400 mr-3 mt-1">&#10004;</span> <div><strong>Chất lượng hoàn hảo:</strong> Tỷ lệ sản phẩm đạt chuẩn (First Pass Yield) rất cao, gần như không sinh ra phế phẩm phải làm lại.</div></li>
+                        </ul>
+                    </div>
+                `
+            },
+            {
+                title: "Tổn Thất Cần Cải Thiện",
+                color: "text-orange-400",
+                content: `
+                    <div class="space-y-4 text-slate-300">
+                        <p>Mức <strong class="text-orange-400 text-xl">15%</strong> này chính là phần năng suất bị "rò rỉ" hay mất đi trong quá trình vận hành thực tế. Nó là tập hợp của <strong>6 Tổn Thất Lớn</strong>:</p>
+                        <ul class="space-y-3 mt-4 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+                            <li class="flex items-start"><span class="text-orange-400 mr-3 mt-1">&#9888;&#65039;</span> <div><strong>Tổn thất Khả dụng:</strong> Mất thời gian do máy hỏng, thời gian Setup hoặc thay khuôn quá lâu.</div></li>
+                            <li class="flex items-start"><span class="text-orange-400 mr-3 mt-1">&#9888;&#65039;</span> <div><strong>Tổn thất Hiệu suất:</strong> Máy chạy chậm hơn tốc độ chuẩn, kẹt vật tư, hoặc các lần dừng vặt (Micro-stops).</div></li>
+                            <li class="flex items-start"><span class="text-orange-400 mr-3 mt-1">&#9888;&#65039;</span> <div><strong>Tổn thất Chất lượng:</strong> Sinh ra hàng lỗi, hàng phế phẩm trong lúc khởi động máy và cả trong lúc đang chạy.</div></li>
+                        </ul>
+                        <p class="text-sm text-cyan-400 mt-4 italic">* Mục tiêu cốt lõi của hệ thống iFactory là giúp bạn nhận diện chính xác 15% này đang nằm ở khâu nào để triệt tiêu chúng.</p>
+                    </div>
+                `
+            }
+        ];
+
+        function openOeeModal(index) {
+            const modal = document.getElementById('oeeDetailModal');
+            const title = document.getElementById('oeeModalTitle');
+            const content = document.getElementById('oeeModalContent');
+            
+            title.innerHTML = oeeDetailsData[index].title;
+            title.className = 'text-2xl font-bold mb-4 ' + oeeDetailsData[index].color;
+            content.innerHTML = oeeDetailsData[index].content;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOeeModal() {
+            const modal = document.getElementById('oeeDetailModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // JS cho Modal Nỗi Đau
+        function openPainPointsModal() {
+            const modal = document.getElementById('painPointsModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // Khóa cuộn màn hình nền
+        }
+
+        function closePainPointsModal() {
+            const modal = document.getElementById('painPointsModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Mở lại cuộn màn hình
+        }
+
+        // Tab Switching Logic
+        function openTab(evt, tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('block');
+                tab.classList.add('hidden');
+            });
+
+            // Remove active classes from all tab buttons
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            tabBtns.forEach(btn => {
+                btn.classList.remove('text-cyan-400', 'border-cyan-400');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+
+            // Show the specific tab content
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+
+            // Add the active classes to the button that opened the tab
+            evt.currentTarget.classList.remove('text-slate-400', 'border-transparent');
+            evt.currentTarget.classList.add('text-cyan-400', 'border-cyan-400');
+        }
+
+        // Charts Logic (Wrapped in function so it initializes properly)
+        function initCharts() {
+            Chart.defaults.color = '#94A3B8';
+            Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+
+            function wrapLabel(label) {
+                if (label.length <= 16) return label;
+                let words = label.split(' ');
+                let lines = [];
+                let currentLine = words[0];
+                for (let i = 1; i < words.length; i++) {
+                    if (currentLine.length + words[i].length + 1 <= 16) {
+                        currentLine += ' ' + words[i];
+                    } else {
+                        lines.push(currentLine);
+                        currentLine = words[i];
+                    }
+                }
+                lines.push(currentLine);
+                return lines;
+            }
+
+            const commonTooltipConfig = {
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            };
+
+            const ctxDonut = document.getElementById('oeeDonutChart');
+            if(ctxDonut) {
+                new Chart(ctxDonut.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: [['OEE Đạt Chuẩn', '(Sản Xuất Hiệu Quả)'], ['Tổn Thất', 'Cần Cải Thiện']],
+                        datasets: [{
+                            data: [85, 15],
+                            backgroundColor: ['#10B981', '#334155'],
+                            borderColor: '#0F172A',
+                            borderWidth: 2,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '75%',
+                        layout: {
+                            padding: 10
+                        },
+                        // Hiệu ứng con trỏ chuột (pointer) khi trỏ vào khối biểu đồ
+                        onHover: (event, elements, chart) => {
+                            chart.canvas.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+                        },
+                        // Sự kiện khi click vào mảng màu trên biểu đồ
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                openOeeModal(elements[0].index);
+                            }
+                        },
+                        plugins: {
+                            legend: { 
+                                display: false // Tắt hoàn toàn legend mặc định vì đã có nút bấm riêng
+                            },
+                            tooltip: commonTooltipConfig
+                        }
+                    },
+                    plugins: [{
+                        id: 'centerText',
+                        beforeDraw: function(chart) {
+                            let ctx = chart.ctx;
+                            let chartArea = chart.chartArea;
+                            if (!chartArea) return;
+                            
+                            let centerX = chartArea.left + (chartArea.right - chartArea.left) / 2;
+                            let centerY = chartArea.top + (chartArea.bottom - chartArea.top) / 2;
+
+                            ctx.restore();
+                            let fontSize = (chart.height / 120).toFixed(2);
+                            ctx.font = "bold " + fontSize + "em sans-serif";
+                            ctx.textBaseline = "middle";
+                            ctx.textAlign = "center";
+                            ctx.fillStyle = "#10B981";
+                            
+                            ctx.fillText("85%", centerX, centerY - 15);
+                            
+                            ctx.font = "normal " + (fontSize*0.35).toFixed(2) + "em sans-serif";
+                            ctx.fillStyle = "#94A3B8";
+                            ctx.fillText("World-Class", centerX, centerY + 25);
+                            ctx.save();
+                        }
+                    }]
+                });
+            }
+
+            const ctxRadar = document.getElementById('radarCompareChart');
+            if(ctxRadar) {
+                const radarLabelsRaw = ['Thu thập dữ liệu tự động', 'Thời gian phản ứng', 'Phát hiện dừng vặt', 'Bảo trì chủ động', 'Ra quyết định chính xác'];
+                const radarLabelsWrapped = radarLabelsRaw.map(wrapLabel);
+                
+                new Chart(ctxRadar.getContext('2d'), {
+                    type: 'radar',
+                    data: {
+                        labels: radarLabelsWrapped,
+                        datasets: [
+                            {
+                                label: 'Nhà Máy Truyền Thống',
+                                data: [20, 30, 10, 20, 40],
+                                backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                                borderColor: '#F97316',
+                                pointBackgroundColor: '#F97316',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'Nhà Máy iFactory',
+                                data: [95, 90, 85, 80, 95],
+                                backgroundColor: 'rgba(6, 182, 212, 0.4)',
+                                borderColor: '#06B6D4',
+                                pointBackgroundColor: '#06B6D4',
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+                                grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                                pointLabels: { color: '#E2E8F0', font: { size: 11 } },
+                                ticks: { display: false, min: 0, max: 100 }
+                            }
+                        },
+                        plugins: {
+                            legend: { position: 'bottom', labels: { color: '#F8FAFC' } },
+                            tooltip: commonTooltipConfig
+                        }
+                    }
+                });
+            }
+
+            const ctxBar = document.getElementById('sixLossesChart');
+            if(ctxBar) {
+                const barLabelsRaw = ['Hỏng hóc thiết bị', 'Cài đặt & Điều chỉnh', 'Dừng vặt & Không tải', 'Giảm tốc độ', 'Phế phẩm khởi động', 'Phế phẩm sản xuất'];
+                const barLabelsWrapped = barLabelsRaw.map(wrapLabel);
+
+                new Chart(ctxBar.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: barLabelsWrapped,
+                        datasets: [{
+                            label: 'Tỷ trọng gây tổn thất OEE (%)',
+                            data: [20, 15, 30, 15, 5, 15],
+                            backgroundColor: [
+                                '#F97316', '#F97316', 
+                                '#06B6D4', '#06B6D4', 
+                                '#10B981', '#10B981'  
+                            ],
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                                title: { display: true, text: 'Mức độ ảnh hưởng (%)', color: '#94A3B8' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#CBD5E1', font: { size: 11 } }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: commonTooltipConfig
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize charts when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initCharts);
+
+
+        // OEE
+        const details = {
+        availability: {
+            title: "Khả dụng (Availability)",
+            color: "text-orange-400",
+            content: "Đo lường thời gian máy thực tế hoạt động so với thời gian đã lên lịch sản xuất.",
+            numerator: "Thời gian vận hành thực tế",
+            denominator: "Thời gian chạy máy theo kế hoạch"
+        },
+        performance: {
+            title: "Hiệu suất (Performance)",
+            color: "text-cyan-400",
+            content: "Đo lường tốc độ thực tế so với tốc độ thiết kế lý tưởng của máy.",
+            numerator: "Tổng sản lượng thực tế × Chu kỳ lý tưởng",
+            denominator: "Thời gian vận hành thực tế"
+        },
+        quality: {
+            title: "Chất lượng (Quality)",
+            color: "text-green-400",
+            content: "Đo lường tỷ lệ sản phẩm đạt chất lượng so với tổng lượng sản phẩm được sản xuất.",
+            numerator: "Số lượng sản phẩm đạt chuẩn",
+            denominator: "Tổng sản lượng sản xuất"
+        }
+    };
+function showDetail(type) {
+    const data = details[type];
+    const container = document.getElementById('detail-container');
+    
+    container.innerHTML = `
+        <div class="w-full animate-in fade-in duration-300">
+            <h4 class="text-base font-bold ${data.color} mb-0.5">${data.title}</h4>
+            
+            <p class="text-slate-400 mb-2 leading-tight text-sm">${data.content}</p>
+            
+            <div class="formula-flex text-slate-200 text-xs bg-slate-800/80 p-3 rounded-lg border border-slate-700 inline-flex items-center">
+                <span class="mr-2 font-semibold text-slate-500 text-[11px]">Tỷ lệ = </span>
+                <div class="fraction">
+                    <span class="numerator py-0 px-2">${data.numerator}</span>
+                    <span class="denominator py-0 px-2">${data.denominator}</span>
+                </div>
+                <span class="ml-2 font-semibold text-slate-500 text-[11px]"> × 100%</span>
+            </div>
+        </div>
+    `;
+}
+    </script>
+
+    <!-- Footer Section -->
+    <footer class="bg-slate-900 border-t border-slate-700 mt-16">
+        <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <img src="tanglx.jpg" alt="Ảnh của bạn" class="w-16 h-16 rounded-full mr-4 border-2 border-cyan-400" style="object-fit: cover;">
+                    <div>
+                        <h3 class="text-lg font-semibold text-slate-200">Tầng Lê - IIoT</h3>    
+                        <p class="text-slate-400">Email: tang.le@qdtek.vn</p>
+                        <p class="text-slate-400">Điện thoại: 0362175717</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
